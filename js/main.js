@@ -1,6 +1,6 @@
 
 // ==========================================
-// 1. CREACIÓN DE LA CLASE CUENTA BANCARIA
+// 1. CLASE CUENTA BANCARIA
 // ==========================================
 
 class CuentaBancaria {
@@ -11,12 +11,9 @@ class CuentaBancaria {
         this.numeroCuenta = numeroCuenta;
         this.tipoCuenta = tipoCuenta;
         this.saldo = saldo;
-
-        // Array para guardar los movimientos
         this.historialMovimientos = [];
     }
 
-    // MÉTODO PARA DEPOSITAR DINERO
     depositar(monto) {
 
         if (monto > 0 && Number.isFinite(monto)) {
@@ -28,18 +25,18 @@ class CuentaBancaria {
             );
 
             return true;
-
-        } else {
-
-            return false;
         }
+
+        return false;
     }
 
-    // MÉTODO PARA RETIRAR DINERO
     retirar(monto) {
 
-        if (monto > 0 && monto <= this.saldo &&
-            Number.isFinite(monto)) {
+        if (
+            monto > 0 &&
+            monto <= this.saldo &&
+            Number.isFinite(monto)
+        ) {
 
             this.saldo -= monto;
 
@@ -48,20 +45,15 @@ class CuentaBancaria {
             );
 
             return true;
-
-        } else {
-
-            return false;
         }
+
+        return false;
     }
 
-    // MÉTODO PARA CONSULTAR SALDO
     consultarSaldo() {
-
         return this.saldo;
     }
 
-    // MÉTODO PARA MOSTRAR LOS DATOS DE LA CUENTA
     mostrarDatos() {
 
         return (
@@ -75,7 +67,7 @@ class CuentaBancaria {
 
 
 // ==========================================
-// 2. INSTANCIACIÓN DE TRES OBJETOS
+// 2. CREACIÓN DE TRES CUENTAS
 // ==========================================
 
 const cuentaPrincipal = new CuentaBancaria(
@@ -101,47 +93,24 @@ const cuentaEmpresa = new CuentaBancaria(
 
 
 // ==========================================
-// 3. VERIFICACIÓN DE LOS MÉTODOS
+// 3. ARRAY DE OBJETOS
 // ==========================================
 
-// Ejecutamos operaciones en los tres objetos
-
-cuentaPrincipal.depositar(500);
-cuentaPrincipal.retirar(500);
-
-cuentaAhorro.depositar(300);
-cuentaAhorro.retirar(300);
-
-cuentaEmpresa.retirar(1000);
-cuentaEmpresa.depositar(1000);
-
-
-// Guardamos las cuentas en un array
 const cuentas = [
     cuentaPrincipal,
     cuentaAhorro,
     cuentaEmpresa
 ];
 
-// Mostramos los resultados en consola
-console.log("===== VERIFICACIÓN DE CUENTAS =====");
-
-for (let cuenta of cuentas) {
-
-    console.log(cuenta.mostrarDatos());
-
-    console.log(
-        "Saldo final: $" + cuenta.consultarSaldo()
-    );
-
-    console.log("-----------------------------");
-}
+// Cuenta seleccionada inicialmente
+let cuentaActual = cuentaPrincipal;
 
 
 // ==========================================
-// 4. FUNCIÓN PARA MOSTRAR EL HISTORIAL
+// 4. FUNCIONES DEL SIMULADOR
 // ==========================================
 
+// Mostrar historial de movimientos
 function mostrarHistorial(cuenta) {
 
     console.log("--- HISTORIAL DE MOVIMIENTOS ---");
@@ -161,7 +130,56 @@ function mostrarHistorial(cuenta) {
 
 
 // ==========================================
-// 5. SIMULADOR BANCARIO INTERACTIVO
+// 5. FUNCIONES DE ORDEN SUPERIOR
+// ==========================================
+
+// FIND: buscar una cuenta por número
+function buscarCuenta(numero) {
+
+    return cuentas.find(
+        cuenta => cuenta.numeroCuenta === numero
+    );
+}
+
+
+// FILTER: filtrar cuentas según su saldo
+function filtrarCuentas(montoMinimo) {
+
+    return cuentas.filter(
+        cuenta => cuenta.saldo >= montoMinimo
+    );
+}
+
+
+// REDUCE: calcular el capital total del banco
+function calcularCapitalTotal() {
+
+    return cuentas.reduce(
+        (total, cuenta) => total + cuenta.saldo,
+        0
+    );
+}
+
+
+// ==========================================
+// 6. VERIFICACIÓN EN CONSOLA
+// ==========================================
+
+console.log("===== CUENTAS REGISTRADAS =====");
+
+for (let cuenta of cuentas) {
+
+    console.log(cuenta.mostrarDatos());
+}
+
+console.log(
+    "Capital total del banco: $" +
+    calcularCapitalTotal()
+);
+
+
+// ==========================================
+// 7. MENÚ PRINCIPAL
 // ==========================================
 
 let continuar = true;
@@ -169,31 +187,43 @@ let continuar = true;
 while (continuar) {
 
     let opcion = prompt(
+
         "SIMULADOR BANCARIO\n\n" +
-        "Titular: " + cuentaPrincipal.titular + "\n" +
-        "Saldo: $" + cuentaPrincipal.consultarSaldo() + "\n\n" +
+
+        "Cuenta activa: " + cuentaActual.titular + "\n" +
+        "Saldo: $" + cuentaActual.consultarSaldo() + "\n\n" +
+
         "1 - Consultar saldo\n" +
         "2 - Depositar dinero\n" +
         "3 - Retirar dinero\n" +
         "4 - Mostrar datos de la cuenta\n" +
         "5 - Consultar historial\n" +
-        "6 - Salir\n\n" +
+        "6 - Cambiar de cuenta\n" +
+        "7 - Buscar cuenta por número\n" +
+        "8 - Filtrar cuentas por saldo\n" +
+        "9 - Consultar capital total del banco\n" +
+        "10 - Salir\n\n" +
+
         "Seleccioná una opción:"
     );
 
-    if (opcion === "1") {
+    if (opcion === null) {
+
+        continuar = false;
+
+    } else if (opcion === "1") {
 
         alert(
             "Tu saldo actual es: $" +
-            cuentaPrincipal.consultarSaldo()
+            cuentaActual.consultarSaldo()
         );
 
         console.log(
             "Consulta de saldo: $" +
-            cuentaPrincipal.consultarSaldo()
+            cuentaActual.consultarSaldo()
         );
 
-        cuentaPrincipal.historialMovimientos.push(
+        cuentaActual.historialMovimientos.push(
             "Consulta de saldo"
         );
 
@@ -203,12 +233,12 @@ while (continuar) {
             prompt("Ingresá el monto que querés depositar:")
         );
 
-        if (cuentaPrincipal.depositar(deposito)) {
+        if (cuentaActual.depositar(deposito)) {
 
             alert(
                 "Depósito realizado correctamente.\n" +
                 "Nuevo saldo: $" +
-                cuentaPrincipal.consultarSaldo()
+                cuentaActual.consultarSaldo()
             );
 
             console.log(
@@ -228,21 +258,22 @@ while (continuar) {
             prompt("Ingresá el monto que querés retirar:")
         );
 
-        if (retiro > 0 && retiro <= cuentaPrincipal.saldo) {
-
-            cuentaPrincipal.retirar(retiro);
+        if (cuentaActual.retirar(retiro)) {
 
             alert(
                 "Retiro realizado correctamente.\n" +
                 "Nuevo saldo: $" +
-                cuentaPrincipal.consultarSaldo()
+                cuentaActual.consultarSaldo()
             );
 
             console.log(
                 "Retiro realizado: $" + retiro
             );
 
-        } else if (retiro > cuentaPrincipal.saldo && retiro > 0) {
+        } else if (
+            Number.isFinite(retiro) &&
+            retiro > cuentaActual.saldo
+        ) {
 
             alert("Fondos insuficientes.");
 
@@ -257,17 +288,131 @@ while (continuar) {
 
     } else if (opcion === "4") {
 
-        alert(cuentaPrincipal.mostrarDatos());
+        alert(cuentaActual.mostrarDatos());
 
-        console.log(cuentaPrincipal.mostrarDatos());
+        console.log(cuentaActual.mostrarDatos());
 
     } else if (opcion === "5") {
 
-        mostrarHistorial(cuentaPrincipal);
+        mostrarHistorial(cuentaActual);
 
         alert("El historial fue mostrado en la consola.");
 
     } else if (opcion === "6") {
+
+        let seleccion = prompt(
+            "SELECCIONAR CUENTA\n\n" +
+            "1 - Damian\n" +
+            "2 - Carlos\n" +
+            "3 - Empresa XYZ\n\n" +
+            "Seleccioná una cuenta:"
+        );
+
+        if (seleccion === "1") {
+
+            cuentaActual = cuentaPrincipal;
+
+        } else if (seleccion === "2") {
+
+            cuentaActual = cuentaAhorro;
+
+        } else if (seleccion === "3") {
+
+            cuentaActual = cuentaEmpresa;
+
+        } else {
+
+            alert("Selección de cuenta no válida.");
+        }
+
+        console.log(
+            "Cuenta activa: " + cuentaActual.titular
+        );
+
+    } else if (opcion === "7") {
+
+        // INTERACCIÓN CON FIND
+
+        let numero = prompt(
+            "Ingresá el número de cuenta que querés buscar:"
+        );
+
+        let cuentaEncontrada = buscarCuenta(numero);
+
+        if (cuentaEncontrada !== undefined) {
+
+            alert(cuentaEncontrada.mostrarDatos());
+
+            console.log(
+                "Cuenta encontrada:",
+                cuentaEncontrada
+            );
+
+        } else {
+
+            alert("No se encontró ninguna cuenta.");
+
+            console.log("Cuenta no encontrada.");
+        }
+
+    } else if (opcion === "8") {
+
+        // INTERACCIÓN CON FILTER
+
+        let montoMinimo = Number(
+            prompt("Ingresá el saldo mínimo que querés filtrar:")
+        );
+
+        if (
+            Number.isFinite(montoMinimo) &&
+            montoMinimo >= 0
+        ) {
+
+            let cuentasFiltradas = filtrarCuentas(montoMinimo);
+
+            console.log("===== CUENTAS FILTRADAS =====");
+
+            if (cuentasFiltradas.length > 0) {
+
+                for (let cuenta of cuentasFiltradas) {
+
+                    console.log(cuenta.mostrarDatos());
+                }
+
+                alert(
+                    "Se encontraron " +
+                    cuentasFiltradas.length +
+                    " cuentas. Revisá la consola."
+                );
+
+            } else {
+
+                alert("No hay cuentas con ese saldo mínimo.");
+
+                console.log("No se encontraron cuentas.");
+            }
+
+        } else {
+
+            alert("Ingresá un monto válido.");
+        }
+
+    } else if (opcion === "9") {
+
+        // INTERACCIÓN CON REDUCE
+
+        let capitalTotal = calcularCapitalTotal();
+
+        alert(
+            "El capital total del banco es: $" +
+            capitalTotal
+        );
+
+        console.log(
+            "Capital total del banco: $" + capitalTotal
+        );
+
+    } else if (opcion === "10") {
 
         alert("Gracias por utilizar el simulador bancario.");
 
