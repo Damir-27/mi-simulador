@@ -320,10 +320,9 @@ while (continuar) {
 
             cuentaActual = cuentaEmpresa;
 
-        } else {
-
-            alert("Selección de cuenta no válida.");
-        }
+        } else if (seleccion !== null) {
+        alert("Selección de cuenta no válida.");
+    }
 
         console.log(
             "Cuenta activa: " + cuentaActual.titular
