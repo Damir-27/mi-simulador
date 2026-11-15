@@ -3,27 +3,32 @@
 
 ## 📌 Descripción del proyecto
 
-Este proyecto consiste en un simulador bancario desarrollado con JavaScript, que permite realizar operaciones bancarias básicas de manera interactiva.
+Este proyecto consiste en un simulador bancario desarrollado con HTML, CSS y JavaScript, que permite administrar diferentes cuentas bancarias mediante una interfaz gráfica e interactiva.
 
-El simulador permite consultar el saldo disponible, depositar y retirar dinero, visualizar los datos de una cuenta y consultar el historial de movimientos.
+El simulador permite crear cuentas, consultar saldos, realizar depósitos y retiros, visualizar los datos de cada cuenta, eliminar cuentas y consultar el historial de movimientos directamente desde la pantalla.
 
-El objetivo del proyecto es aplicar los conocimientos adquiridos durante el aprendizaje de JavaScript, incorporando variables, funciones, condicionales, ciclos, arrays, métodos de manipulación de arrays, clases y objetos.
+El objetivo del proyecto es aplicar los conocimientos adquiridos durante el aprendizaje de JavaScript, incorporando variables, funciones, estructuras condicionales, arrays, métodos de manipulación de arrays, clases, objetos, funciones de orden superior y manipulación del DOM.
 
 ## 🚀 Funcionalidades
 
-El simulador cuenta con las siguientes opciones:
+El simulador cuenta con las siguientes funcionalidades:
 
-1. **Consultar saldo:** permite visualizar el dinero disponible en la cuenta.
-2. **Depositar dinero:** permite ingresar dinero y actualizar el saldo.
-3. **Retirar dinero:** permite retirar dinero siempre que existan fondos suficientes.
-4. **Mostrar datos de la cuenta:** permite consultar los datos del titular, número y tipo de cuenta.
-5. **Consultar historial:** muestra los movimientos realizados en la cuenta.
-6. **Salir:** finaliza la ejecución del simulador.
+1. **Crear cuentas:** permite registrar nuevas cuentas bancarias mediante un formulario.
+2. **Consultar saldo:** permite visualizar el saldo disponible de cada cuenta.
+3. **Depositar dinero:** permite ingresar dinero y actualizar el saldo de una cuenta.
+4. **Retirar dinero:** permite retirar dinero siempre que existan fondos suficientes.
+5. **Mostrar datos de la cuenta:** permite consultar el titular, número y tipo de cuenta.
+6. **Consultar historial:** permite visualizar los depósitos y retiros realizados en cada cuenta mediante el botón «Ver historial».
+7. **Eliminar cuentas:** permite eliminar cuentas bancarias del listado.
+8. **Buscar cuentas:** permite filtrar las cuentas por nombre del titular o número de cuenta.
+9. **Resumen general:** muestra la cantidad de cuentas registradas y el capital total administrado.
+10. **Mensajes de validación:** muestra mensajes de éxito o error directamente en la interfaz.
 
 ## 🛠️ Tecnologías utilizadas
 
+- HTML5.
+- CSS3.
 - JavaScript.
-- HTML (para ejecutar el código dentro de un navegador).
 - Visual Studio Code.
 - Git y GitHub.
 
@@ -33,24 +38,31 @@ Durante el desarrollo del proyecto se implementaron los siguientes conceptos:
 
 - Variables (`let` y `const`).
 - Estructuras condicionales (`if`, `else if`, `else`).
-- Ciclos (`while` y `for...of`).
 - Funciones y parámetros.
-- Arrays.
-- Métodos de arrays:
+- Funciones flecha.
+- Arrays y arrays de objetos.
+- Métodos de manipulación de arrays:
   - `push()`
-  - `unshift()`
-  - `pop()`
-  - `includes()`
   - `indexOf()`
   - `splice()`
+  - `forEach()`
+  - `includes()`
+- Funciones de orden superior:
+  - `find()`
+  - `filter()`
+  - `reduce()`
+  - `map()`
 - Programación Orientada a Objetos (POO).
 - Clases (`class`).
-- Constructor.
+- Constructores.
 - Instanciación de objetos (`new`).
 - Métodos y propiedades.
 - Uso de `this` y `return`.
-- Interacción con el usuario mediante `prompt()` y `alert()`.
-- Salida de información mediante `console.log()`.
+- Manipulación del DOM mediante `querySelector()` e `innerHTML`.
+- Manejo de eventos mediante `addEventListener()`.
+- Delegación de eventos.
+- Validación de datos ingresados por el usuario.
+- Generación dinámica de contenido HTML mediante template literals.
 
 ## 📂 Estructura del proyecto
 
@@ -58,7 +70,13 @@ Durante el desarrollo del proyecto se implementaron los siguientes conceptos:
 simulador-bancario/
 │
 ├── index.html
-├── script.js
+│
+├── css/
+│   └── style.css
+│
+├── js/
+│   └── main.js
+│
 └── README.md
 ```
 
@@ -68,8 +86,16 @@ Para ejecutar el simulador, seguí estos pasos:
 
 1. Cloná o descargá el repositorio desde GitHub.
 2. Abrí la carpeta del proyecto con Visual Studio Code.
-3. Verificá que el archivo `script.js` esté vinculado correctamente desde `index.html`.
+3. Verificá que los archivos CSS y JavaScript estén vinculados correctamente desde `index.html`.
 4. Abrí el archivo `index.html` en un navegador web.
-5. El simulador comenzará a ejecutarse mediante ventanas interactivas de `prompt()` y `alert()`.
+5. Interactuá con el simulador utilizando los formularios, botones y buscador disponibles en la interfaz.
 
-También podés abrir la consola del navegador presionando `F12` y seleccionar la pestaña **Console** para visualizar los registros de las operaciones realizadas.
+## 💾 Almacenamiento de datos
+
+Actualmente, las cuentas bancarias y sus movimientos se almacenan en memoria mediante arrays y objetos de JavaScript.
+
+Esto significa que los datos se mantienen mientras la aplicación está abierta, pero se reinician al actualizar o cerrar la página.
+
+## 👨‍💻 Autor
+
+Proyecto desarrollado como parte del aprendizaje de JavaScript.

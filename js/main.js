@@ -1,12 +1,9 @@
-
 // ==========================================
 // 1. CLASE CUENTA BANCARIA
 // ==========================================
 
 class CuentaBancaria {
-
     constructor(titular, numeroCuenta, tipoCuenta, saldo) {
-
         this.titular = titular;
         this.numeroCuenta = numeroCuenta;
         this.tipoCuenta = tipoCuenta;
@@ -15,14 +12,10 @@ class CuentaBancaria {
     }
 
     depositar(monto) {
-
-        if (monto > 0 && Number.isFinite(monto)) {
-
+        if (Number.isFinite(monto) && monto > 0) {
             this.saldo += monto;
 
-            this.historialMovimientos.push(
-                "Depósito: $" + monto
-            );
+            this.historialMovimientos.push("Depósito: $" + monto);
 
             return true;
         }
@@ -31,18 +24,10 @@ class CuentaBancaria {
     }
 
     retirar(monto) {
-
-        if (
-            monto > 0 &&
-            monto <= this.saldo &&
-            Number.isFinite(monto)
-        ) {
-
+        if (Number.isFinite(monto) && monto > 0 && monto <= this.saldo) {
             this.saldo -= monto;
 
-            this.historialMovimientos.push(
-                "Retiro: $" + monto
-            );
+            this.historialMovimientos.push("Retiro: $" + monto);
 
             return true;
         }
@@ -55,374 +40,386 @@ class CuentaBancaria {
     }
 
     mostrarDatos() {
-
         return (
-            "Titular: " + this.titular +
-            "\nNúmero de cuenta: " + this.numeroCuenta +
-            "\nTipo de cuenta: " + this.tipoCuenta +
-            "\nSaldo disponible: $" + this.saldo
+            "Titular: " +
+            this.titular +
+            " | Cuenta: " +
+            this.numeroCuenta +
+            " | Tipo: " +
+            this.tipoCuenta +
+            " | Saldo: $" +
+            this.saldo
         );
     }
 }
 
-
 // ==========================================
-// 2. CREACIÓN DE TRES CUENTAS
+// 2. CREACIÓN DE LAS CUENTAS
 // ==========================================
 
 const cuentaPrincipal = new CuentaBancaria(
     "Damian",
     "001",
     "Caja de ahorro",
-    10000
+    10000,
 );
 
 const cuentaAhorro = new CuentaBancaria(
     "Carlos",
     "002",
     "Caja de ahorro",
-    5000
+    5000,
 );
 
 const cuentaEmpresa = new CuentaBancaria(
     "Empresa XYZ",
     "003",
     "Cuenta corriente",
-    25000
+    25000,
 );
-
 
 // ==========================================
 // 3. ARRAY DE OBJETOS
 // ==========================================
 
-const cuentas = [
-    cuentaPrincipal,
-    cuentaAhorro,
-    cuentaEmpresa
-];
-
-// Cuenta seleccionada inicialmente
-let cuentaActual = cuentaPrincipal;
-
+const cuentas = [cuentaPrincipal, cuentaAhorro, cuentaEmpresa];
 
 // ==========================================
-// 4. FUNCIONES DEL SIMULADOR
+// 4. SELECCIÓN DE ELEMENTOS DEL DOM
 // ==========================================
 
-// Mostrar historial de movimientos
-function mostrarHistorial(cuenta) {
+const formularioCuenta = document.querySelector("#formularioCuenta");
+const listaCuentas = document.querySelector("#listaCuentas");
+const buscador = document.querySelector("#buscador");
+const mensaje = document.querySelector("#mensaje");
+const totalCuentas = document.querySelector("#totalCuentas");
+const capitalTotal = document.querySelector("#capitalTotal");
 
-    console.log("--- HISTORIAL DE MOVIMIENTOS ---");
+const inputTitular = document.querySelector("#titular");
+const inputNumero = document.querySelector("#numeroCuenta");
+const inputTipo = document.querySelector("#tipoCuenta");
+const inputSaldo = document.querySelector("#saldoInicial");
 
-    if (cuenta.historialMovimientos.length === 0) {
+// ==========================================
+// 5. FUNCIONES AUXILIARES
+// ==========================================
 
-        console.log("No hay movimientos registrados.");
-
-    } else {
-
-        for (let movimiento of cuenta.historialMovimientos) {
-
-            console.log("Movimiento: " + movimiento);
-        }
-    }
+// Formatear importes como moneda argentina
+function formatearDinero(monto) {
+    return monto.toLocaleString("es-AR", {
+        style: "currency",
+        currency: "ARS",
+        minimumFractionDigits: 2,
+    });
 }
 
+// Evitar que los datos ingresados se interpreten como HTML
+function escaparHTML(valor) {
+    return String(valor).replace(/[&<>"']/g, (caracter) => {
+        const caracteres = {
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#039;",
+        };
 
-// ==========================================
-// 5. FUNCIONES DE ORDEN SUPERIOR
-// ==========================================
-
-// FIND: buscar una cuenta por número
-function buscarCuenta(numero) {
-
-    return cuentas.find(
-        cuenta => cuenta.numeroCuenta === numero
-    );
+        return caracteres[caracter];
+    });
 }
 
-
-// FILTER: filtrar cuentas según su saldo
-function filtrarCuentas(montoMinimo) {
-
-    return cuentas.filter(
-        cuenta => cuenta.saldo >= montoMinimo
-    );
+// Mostrar mensajes en pantalla
+function mostrarMensaje(texto, tipo) {
+    mensaje.textContent = texto;
+    mensaje.className = "mensaje " + tipo;
 }
 
-
-// REDUCE: calcular el capital total del banco
-function calcularCapitalTotal() {
-
-    return cuentas.reduce(
-        (total, cuenta) => total + cuenta.saldo,
-        0
-    );
-}
-
-
 // ==========================================
-// 6. VERIFICACIÓN EN CONSOLA
+// 6. ACTUALIZAR RESUMEN
 // ==========================================
 
-console.log("===== CUENTAS REGISTRADAS =====");
+function actualizarResumen() {
+    totalCuentas.textContent = cuentas.length;
 
-for (let cuenta of cuentas) {
-
-    console.log(cuenta.mostrarDatos());
-}
-
-console.log(
-    "Capital total del banco: $" +
-    calcularCapitalTotal()
-);
-
-
-// ==========================================
-// 7. MENÚ PRINCIPAL
-// ==========================================
-
-let continuar = true;
-
-while (continuar) {
-
-    let opcion = prompt(
-
-        "SIMULADOR BANCARIO\n\n" +
-
-        "Cuenta activa: " + cuentaActual.titular + "\n" +
-        "Saldo: $" + cuentaActual.consultarSaldo() + "\n\n" +
-
-        "1 - Consultar saldo\n" +
-        "2 - Depositar dinero\n" +
-        "3 - Retirar dinero\n" +
-        "4 - Mostrar datos de la cuenta\n" +
-        "5 - Consultar historial\n" +
-        "6 - Cambiar de cuenta\n" +
-        "7 - Buscar cuenta por número\n" +
-        "8 - Filtrar cuentas por saldo\n" +
-        "9 - Consultar capital total del banco\n" +
-        "10 - Salir\n\n" +
-
-        "Seleccioná una opción:"
+    const total = cuentas.reduce(
+        (acumulador, cuenta) => acumulador + cuenta.saldo,
+        0,
     );
 
-    if (opcion === null) {
+    capitalTotal.textContent = formatearDinero(total);
+}
 
-        continuar = false;
+// ==========================================
+// 7. RENDERIZADO DINÁMICO
+// ==========================================
 
-    } else if (opcion === "1") {
+function renderizarCuentas() {
+    const busqueda = buscador.value.trim().toLowerCase();
 
-        alert(
-            "Tu saldo actual es: $" +
-            cuentaActual.consultarSaldo()
+    const cuentasFiltradas = cuentas.filter((cuenta) => {
+        return (
+            cuenta.titular.toLowerCase().includes(busqueda) ||
+            cuenta.numeroCuenta.toLowerCase().includes(busqueda)
         );
+    });
 
-        console.log(
-            "Consulta de saldo: $" +
-            cuentaActual.consultarSaldo()
-        );
+    listaCuentas.innerHTML = "";
 
-        cuentaActual.historialMovimientos.push(
-            "Consulta de saldo"
-        );
+    if (cuentasFiltradas.length === 0) {
+        listaCuentas.innerHTML = `
+            <p class="sin-resultados">
+                No se encontraron cuentas.
+            </p>
+        `;
 
-    } else if (opcion === "2") {
-
-        let deposito = Number(
-            prompt("Ingresá el monto que querés depositar:")
-        );
-
-        if (cuentaActual.depositar(deposito)) {
-
-            alert(
-                "Depósito realizado correctamente.\n" +
-                "Nuevo saldo: $" +
-                cuentaActual.consultarSaldo()
-            );
-
-            console.log(
-                "Depósito realizado: $" + deposito
-            );
-
-        } else {
-
-            alert("El monto ingresado no es válido.");
-
-            console.log("Error: depósito no válido.");
-        }
-
-    } else if (opcion === "3") {
-
-        let retiro = Number(
-            prompt("Ingresá el monto que querés retirar:")
-        );
-
-        if (cuentaActual.retirar(retiro)) {
-
-            alert(
-                "Retiro realizado correctamente.\n" +
-                "Nuevo saldo: $" +
-                cuentaActual.consultarSaldo()
-            );
-
-            console.log(
-                "Retiro realizado: $" + retiro
-            );
-
-        } else if (
-            Number.isFinite(retiro) &&
-            retiro > cuentaActual.saldo
-        ) {
-
-            alert("Fondos insuficientes.");
-
-            console.log("Error: fondos insuficientes.");
-
-        } else {
-
-            alert("El monto ingresado no es válido.");
-
-            console.log("Error: retiro no válido.");
-        }
-
-    } else if (opcion === "4") {
-
-        alert(cuentaActual.mostrarDatos());
-
-        console.log(cuentaActual.mostrarDatos());
-
-    } else if (opcion === "5") {
-
-        mostrarHistorial(cuentaActual);
-
-        alert("El historial fue mostrado en la consola.");
-
-    } else if (opcion === "6") {
-
-        let seleccion = prompt(
-            "SELECCIONAR CUENTA\n\n" +
-            "1 - Damian\n" +
-            "2 - Carlos\n" +
-            "3 - Empresa XYZ\n\n" +
-            "Seleccioná una cuenta:"
-        );
-
-        if (seleccion === "1") {
-
-            cuentaActual = cuentaPrincipal;
-
-        } else if (seleccion === "2") {
-
-            cuentaActual = cuentaAhorro;
-
-        } else if (seleccion === "3") {
-
-            cuentaActual = cuentaEmpresa;
-
-        } else if (seleccion !== null) {
-        alert("Selección de cuenta no válida.");
+        actualizarResumen();
+        return;
     }
 
-        console.log(
-            "Cuenta activa: " + cuentaActual.titular
-        );
+    cuentasFiltradas.forEach((cuenta) => {
+        const movimientosHTML =
+            cuenta.historialMovimientos.length > 0
+                ? cuenta.historialMovimientos
+                    .map(
+                        (movimiento) => `
+        <li>${escaparHTML(movimiento)}</li>
+    `,
+                    )
+                    .join("")
+                : "<li>Todavía no hay movimientos registrados.</li>";
 
-    } else if (opcion === "7") {
+        listaCuentas.innerHTML += `
+            <article class="cuenta-card">
 
-        // INTERACCIÓN CON FIND
+                <h3>${escaparHTML(cuenta.titular)}</h3>
 
-        let numero = prompt(
-            "Ingresá el número de cuenta que querés buscar:"
-        );
+                <p class="dato-cuenta">
+                    Número de cuenta:
+                    ${escaparHTML(cuenta.numeroCuenta)}
+                </p>
 
-        let cuentaEncontrada = buscarCuenta(numero);
+                <p class="dato-cuenta">
+                    Tipo:
+                    ${escaparHTML(cuenta.tipoCuenta)}
+                </p>
 
-        if (cuentaEncontrada !== undefined) {
+                <p class="saldo-cuenta">
+                    ${formatearDinero(cuenta.saldo)}
+                </p>
 
-            alert(cuentaEncontrada.mostrarDatos());
+                <div class="operaciones">
 
-            console.log(
-                "Cuenta encontrada:",
-                cuentaEncontrada
-            );
+                    <input
+                        type="number"
+                        class="monto-operacion"
+                        min="0.01"
+                        step="0.01"
+                        placeholder="Ingresá un monto"
+                        aria-label="Monto para ${escaparHTML(cuenta.titular)}"
+                    >
 
-        } else {
+                    <button
+                        type="button"
+                        class="boton boton-depositar"
+                        data-accion="depositar"
+                        data-cuenta="${escaparHTML(cuenta.numeroCuenta)}"
+                    >
+                        Depositar
+                    </button>
 
-            alert("No se encontró ninguna cuenta.");
+                    <button
+                        type="button"
+                        class="boton boton-retirar"
+                        data-accion="retirar"
+                        data-cuenta="${escaparHTML(cuenta.numeroCuenta)}"
+                    >
+                        Retirar
+                    </button>
 
-            console.log("Cuenta no encontrada.");
-        }
+                    <button
+                        type="button"
+                        class="boton boton-eliminar"
+                        data-accion="eliminar"
+                        data-cuenta="${escaparHTML(cuenta.numeroCuenta)}"
+                    >
+                        Eliminar
+                    </button>
 
-    } else if (opcion === "8") {
+                </div>
 
-        // INTERACCIÓN CON FILTER
+                <button
+                    type="button"
+                    class="boton boton-historial"
+                    data-accion="historial"
+                    data-cuenta="${escaparHTML(cuenta.numeroCuenta)}"
+                >
+                    Ver historial
+                </button>
 
-        let montoMinimo = Number(
-            prompt("Ingresá el saldo mínimo que querés filtrar:")
-        );
+                <div class="historial-cuenta" hidden>
+                    <h4>Historial de movimientos</h4>
+                    <ul>
+                        ${movimientosHTML}
+                    </ul>
+                </div>
 
-        if (
-            Number.isFinite(montoMinimo) &&
-            montoMinimo >= 0
-        ) {
+            </article>
+        `;
+    });
 
-            let cuentasFiltradas = filtrarCuentas(montoMinimo);
-
-            console.log("===== CUENTAS FILTRADAS =====");
-
-            if (cuentasFiltradas.length > 0) {
-
-                for (let cuenta of cuentasFiltradas) {
-
-                    console.log(cuenta.mostrarDatos());
-                }
-
-                alert(
-                    "Se encontraron " +
-                    cuentasFiltradas.length +
-                    " cuentas. Revisá la consola."
-                );
-
-            } else {
-
-                alert("No hay cuentas con ese saldo mínimo.");
-
-                console.log("No se encontraron cuentas.");
-            }
-
-        } else {
-
-            alert("Ingresá un monto válido.");
-        }
-
-    } else if (opcion === "9") {
-
-        // INTERACCIÓN CON REDUCE
-
-        let capitalTotal = calcularCapitalTotal();
-
-        alert(
-            "El capital total del banco es: $" +
-            capitalTotal
-        );
-
-        console.log(
-            "Capital total del banco: $" + capitalTotal
-        );
-
-    } else if (opcion === "10") {
-
-        alert("Gracias por utilizar el simulador bancario.");
-
-        console.log("Simulador bancario finalizado.");
-
-        continuar = false;
-
-    } else {
-
-        alert("Opción no válida. Intentá nuevamente.");
-
-        console.log("Error: opción no válida.");
-    }
+    actualizarResumen();
 }
+
+// ==========================================
+// 8. AGREGAR UNA NUEVA CUENTA
+// ==========================================
+
+formularioCuenta.addEventListener("submit", function (evento) {
+    evento.preventDefault();
+
+    const titular = inputTitular.value.trim();
+    const numero = inputNumero.value.trim();
+    const tipo = inputTipo.value;
+    const saldo = Number(inputSaldo.value);
+
+    if (
+        titular === "" ||
+        numero === "" ||
+        tipo === "" ||
+        inputSaldo.value.trim() === "" ||
+        !Number.isFinite(saldo) ||
+        saldo < 0
+    ) {
+        mostrarMensaje("Completá todos los campos con datos válidos.", "error");
+
+        return;
+    }
+
+    const cuentaExistente = cuentas.find(
+        (cuenta) => cuenta.numeroCuenta === numero,
+    );
+
+    if (cuentaExistente) {
+        mostrarMensaje("Ya existe una cuenta con ese número.", "error");
+
+        return;
+    }
+
+    const nuevaCuenta = new CuentaBancaria(titular, numero, tipo, saldo);
+
+    cuentas.push(nuevaCuenta);
+
+    formularioCuenta.reset();
+
+    renderizarCuentas();
+
+    mostrarMensaje(
+        "La cuenta de " + titular + " fue creada correctamente.",
+        "exito",
+    );
+});
+
+// ==========================================
+// 9. EVENTOS DE LOS BOTONES
+// ==========================================
+
+listaCuentas.addEventListener("click", function (evento) {
+    const boton = evento.target.closest("button[data-accion]");
+
+    if (!boton) {
+        return;
+    }
+
+    const accion = boton.dataset.accion;
+    const numeroCuenta = boton.dataset.cuenta;
+
+    const cuenta = cuentas.find((cuenta) => cuenta.numeroCuenta === numeroCuenta);
+
+    if (!cuenta) {
+        mostrarMensaje("No se encontró la cuenta.", "error");
+        return;
+    }
+
+    if (accion === "historial") {
+        const tarjeta = boton.closest(".cuenta-card");
+        const historial = tarjeta.querySelector(".historial-cuenta");
+
+        historial.hidden = !historial.hidden;
+
+        boton.textContent = historial.hidden
+            ? "Ver historial"
+            : "Ocultar historial";
+
+        return;
+    }
+
+    // ELIMINAR CUENTA
+    if (accion === "eliminar") {
+        const indice = cuentas.indexOf(cuenta);
+
+        cuentas.splice(indice, 1);
+
+        renderizarCuentas();
+
+        mostrarMensaje(
+            "La cuenta de " + cuenta.titular + " fue eliminada.",
+            "exito",
+        );
+
+        return;
+    }
+
+    // OBTENER EL IMPORTE INGRESADO
+    const tarjeta = boton.closest(".cuenta-card");
+    const inputMonto = tarjeta.querySelector(".monto-operacion");
+    const monto = Number(inputMonto.value);
+
+    if (!Number.isFinite(monto) || monto <= 0) {
+        mostrarMensaje("Ingresá un monto mayor a cero.", "error");
+
+        return;
+    }
+
+    // DEPOSITAR
+    if (accion === "depositar") {
+        if (cuenta.depositar(monto)) {
+            mostrarMensaje(
+                "Depósito realizado correctamente en la cuenta de " +
+                cuenta.titular +
+                ".",
+                "exito",
+            );
+        } else {
+            mostrarMensaje("No se pudo realizar el depósito.", "error");
+        }
+    }
+    // RETIRAR
+    else if (accion === "retirar") {
+        if (cuenta.retirar(monto)) {
+            mostrarMensaje(
+                "Retiro realizado correctamente en la cuenta de " +
+                cuenta.titular +
+                ".",
+                "exito",
+            );
+        } else {
+            mostrarMensaje("Fondos insuficientes para realizar el retiro.", "error");
+        }
+    }
+
+    renderizarCuentas();
+});
+
+// ==========================================
+// 10. BUSCADOR EN TIEMPO REAL
+// ==========================================
+
+buscador.addEventListener("input", function () {
+    renderizarCuentas();
+});
+
+// ==========================================
+// 11. INICIAR LA APLICACIÓN
+// ==========================================
+
+renderizarCuentas();
