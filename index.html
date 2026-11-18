@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -40,22 +41,12 @@
 
                 <div class="grupo">
                     <label for="titular">Titular</label>
-                    <input
-                        type="text"
-                        id="titular"
-                        placeholder="Nombre del titular"
-                        required
-                    >
+                    <input type="text" id="titular" placeholder="Nombre del titular" required>
                 </div>
 
                 <div class="grupo">
                     <label for="numeroCuenta">Número de cuenta</label>
-                    <input
-                        type="text"
-                        id="numeroCuenta"
-                        placeholder="Ej: 004"
-                        required
-                    >
+                    <input type="text" id="numeroCuenta" placeholder="Ej: 004" required>
                 </div>
 
                 <div class="grupo">
@@ -69,14 +60,7 @@
 
                 <div class="grupo">
                     <label for="saldoInicial">Saldo inicial</label>
-                    <input
-                        type="number"
-                        id="saldoInicial"
-                        placeholder="Ej: 10000"
-                        min="0"
-                        step="0.01"
-                        required
-                    >
+                    <input type="number" id="saldoInicial" placeholder="Ej: 10000" min="0" step="0.01" required>
                 </div>
 
                 <button type="submit" class="boton boton-principal">
@@ -93,12 +77,12 @@
                     <p>Consultá y administrá tus cuentas.</p>
                 </div>
 
-                <input
-                    type="search"
-                    id="buscador"
-                    placeholder="Buscar por titular o número..."
-                >
+                <input type="search" id="buscador" placeholder="Buscar por titular o número...">
             </div>
+
+            <button type="button" id="vaciarCuentas" class="boton boton-vaciar">
+                Vaciar todas las cuentas
+            </button>
 
             <p id="mensaje" class="mensaje" aria-live="polite"></p>
 
@@ -114,4 +98,5 @@
     </footer>
 
 </body>
+
 </html>

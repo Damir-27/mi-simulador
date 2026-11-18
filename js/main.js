@@ -54,35 +54,70 @@ class CuentaBancaria {
 }
 
 // ==========================================
-// 2. CREACIÓN DE LAS CUENTAS
+// 2. PERSISTENCIA DE CUENTAS EN LOCALSTORAGE
 // ==========================================
 
-const cuentaPrincipal = new CuentaBancaria(
-    "Damian",
-    "001",
-    "Caja de ahorro",
-    10000,
-);
+const CLAVE_STORAGE = "simuladorBancario";
 
-const cuentaAhorro = new CuentaBancaria(
-    "Carlos",
-    "002",
-    "Caja de ahorro",
-    5000,
-);
+// Crear las cuentas iniciales
+function crearCuentasIniciales() {
+    return [
+        new CuentaBancaria("Damian", "001", "Caja de ahorro", 10000),
+        new CuentaBancaria("Carlos", "002", "Caja de ahorro", 5000),
+        new CuentaBancaria("Empresa XYZ", "003", "Cuenta corriente", 25000),
+    ];
+}
 
-const cuentaEmpresa = new CuentaBancaria(
-    "Empresa XYZ",
-    "003",
-    "Cuenta corriente",
-    25000,
-);
+// Recuperar las cuentas guardadas
+function cargarCuentas() {
+    try {
+        const datosGuardados = JSON.parse(
+            localStorage.getItem(CLAVE_STORAGE) ?? "null"
+        );
+
+        if (!Array.isArray(datosGuardados)) {
+            return crearCuentasIniciales();
+        }
+
+        // Destructuring para recuperar las propiedades de cada cuenta
+        return datosGuardados.map(
+            ({
+                titular,
+                numeroCuenta,
+                tipoCuenta,
+                saldo,
+                historialMovimientos = [],
+            }) => {
+                const cuenta = new CuentaBancaria(
+                    titular,
+                    numeroCuenta,
+                    tipoCuenta,
+                    saldo
+                );
+
+                cuenta.historialMovimientos = historialMovimientos ?? [];
+
+                return cuenta;
+            }
+        );
+    } catch (error) {
+        return crearCuentasIniciales();
+    }
+}
 
 // ==========================================
-// 3. ARRAY DE OBJETOS
+// 3. Array principal de cuentas
 // ==========================================
+const cuentas = cargarCuentas();
 
-const cuentas = [cuentaPrincipal, cuentaAhorro, cuentaEmpresa];
+// Guardar las cuentas actualizadas
+function guardarCuentas() {
+    localStorage.setItem(
+        CLAVE_STORAGE,
+        JSON.stringify(cuentas)
+    );
+}
+
 
 // ==========================================
 // 4. SELECCIÓN DE ELEMENTOS DEL DOM
@@ -99,6 +134,7 @@ const inputTitular = document.querySelector("#titular");
 const inputNumero = document.querySelector("#numeroCuenta");
 const inputTipo = document.querySelector("#tipoCuenta");
 const inputSaldo = document.querySelector("#saldoInicial");
+const botonVaciar = document.querySelector("#vaciarCuentas");
 
 // ==========================================
 // 5. FUNCIONES AUXILIARES
@@ -309,6 +345,8 @@ formularioCuenta.addEventListener("submit", function (evento) {
 
     cuentas.push(nuevaCuenta);
 
+    guardarCuentas();
+
     formularioCuenta.reset();
 
     renderizarCuentas();
@@ -359,6 +397,8 @@ listaCuentas.addEventListener("click", function (evento) {
 
         cuentas.splice(indice, 1);
 
+        guardarCuentas();
+
         renderizarCuentas();
 
         mostrarMensaje(
@@ -406,20 +446,42 @@ listaCuentas.addEventListener("click", function (evento) {
             mostrarMensaje("Fondos insuficientes para realizar el retiro.", "error");
         }
     }
+    guardarCuentas();
 
     renderizarCuentas();
 });
+// ==========================================
+// VACIAR TODAS LAS CUENTAS
+// ==========================================
+
+if (botonVaciar) {
+    botonVaciar.addEventListener("click", function () {
+        cuentas.splice(0, cuentas.length);
+
+        guardarCuentas();
+        renderizarCuentas();
+
+        mostrarMensaje(
+            "Se eliminaron todas las cuentas.",
+            "exito"
+        );
+    });
+}
+
+
 
 // ==========================================
 // 10. BUSCADOR EN TIEMPO REAL
 // ==========================================
 
-buscador.addEventListener("input", function () {
+buscador.addEventListener("keyup", function () {
     renderizarCuentas();
 });
 
 // ==========================================
 // 11. INICIAR LA APLICACIÓN
 // ==========================================
+
+guardarCuentas();
 
 renderizarCuentas();

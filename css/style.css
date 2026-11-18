@@ -262,6 +262,12 @@ footer {
     border-bottom: 1px solid #cbd5e1;
 }
 
+.boton-vaciar {
+    background-color: #fde4e5;
+    color: #a52c35;
+    margin-bottom: 18px;
+}
+
 @media (max-width: 700px) {
     .resumen,
     .lista-cuentas,
