@@ -118,7 +118,97 @@ function guardarCuentas() {
     );
 }
 
+// ==========================================
+// CARGA ASINCRÓNICA DE INFORMACIÓN BANCARIA
+// ==========================================
 
+function cargarResumenBancario() {
+    return new Promise((resolve, reject) => {
+
+        setTimeout(() => {
+
+            // Verificamos que las cuentas tengan información válida.
+            const datosValidos = Array.isArray(cuentas) &&
+                cuentas.every(cuenta =>
+                    Number.isFinite(cuenta.saldo)
+                );
+
+            if (!datosValidos) {
+                reject(new Error("Los datos bancarios no son válidos."));
+                return;
+            }
+
+            // Calculamos información del simulador.
+            const resumen = {
+                cantidad: cuentas.length,
+                capital: cuentas.reduce(
+                    (total, cuenta) => total + cuenta.saldo,
+                    0
+                )
+            };
+
+            resolve(resumen);
+
+        }, 1500);
+
+    });
+}
+
+// ==========================================
+// CONSUMO DE PROMESA CON ASYNC / AWAIT
+// ==========================================
+
+async function iniciarCargaAsincronica() {
+
+    mensaje.setAttribute("aria-busy", "true");
+    mostrarMensaje("Cargando información bancaria...", "info");
+
+    try {
+
+        const resumen = await cargarResumenBancario();
+
+        mostrarMensaje(
+            "Información actualizada. Cuentas: " +
+            resumen.cantidad +
+            " | Capital total: " +
+            formatearDinero(resumen.capital),
+            "exito"
+        );
+
+    } catch (error) {
+
+        mostrarMensaje(
+            "No se pudo cargar la información bancaria. Intentá nuevamente.",
+            "error"
+        );
+
+    } finally {
+
+        mensaje.removeAttribute("aria-busy");
+
+    }
+}
+// ==========================================
+// TEMPORIZADOR DE BIENVENIDA
+// ==========================================
+
+function mostrarAvisoBienvenida() {
+
+    setTimeout(() => {
+
+        if (!avisoBienvenida) {
+            console.error("No se encontró el elemento de bienvenida.");
+            return;
+        }
+
+        avisoBienvenida.textContent =
+            "¡Bienvenido al Simulador Bancario! Recordá revisar periódicamente los movimientos de tus cuentas.";
+
+        avisoBienvenida.classList.add("aviso-visible");
+
+    }, 4000);
+
+}
 // ==========================================
 // 4. SELECCIÓN DE ELEMENTOS DEL DOM
 // ==========================================
@@ -129,12 +219,12 @@ const buscador = document.querySelector("#buscador");
 const mensaje = document.querySelector("#mensaje");
 const totalCuentas = document.querySelector("#totalCuentas");
 const capitalTotal = document.querySelector("#capitalTotal");
-
 const inputTitular = document.querySelector("#titular");
 const inputNumero = document.querySelector("#numeroCuenta");
 const inputTipo = document.querySelector("#tipoCuenta");
 const inputSaldo = document.querySelector("#saldoInicial");
 const botonVaciar = document.querySelector("#vaciarCuentas");
+const avisoBienvenida = document.querySelector("#avisoBienvenida");
 
 // ==========================================
 // 5. FUNCIONES AUXILIARES
@@ -483,5 +573,7 @@ buscador.addEventListener("keyup", function () {
 // ==========================================
 
 guardarCuentas();
-
 renderizarCuentas();
+
+iniciarCargaAsincronica();
+mostrarAvisoBienvenida();

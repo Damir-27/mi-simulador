@@ -268,6 +268,20 @@ footer {
     margin-bottom: 18px;
 }
 
+#avisoBienvenida {
+    display: none;
+    padding: 12px 16px;
+    margin-top: 15px;
+    border-radius: 8px;
+    background-color: #e8eef5;
+    color: #243b53;
+    text-align: center;
+}
+
+#avisoBienvenida.aviso-visible {
+    display: block;
+}
+
 @media (max-width: 700px) {
     .resumen,
     .lista-cuentas,
