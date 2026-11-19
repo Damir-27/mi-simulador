@@ -282,6 +282,54 @@ footer {
     display: block;
 }
 
+.lista-servicios {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 18px;
+    margin-top: 20px;
+}
+
+.servicio-card {
+    padding: 20px;
+    border: 1px solid #dce2e8;
+    border-radius: 10px;
+    background-color: #ffffff;
+    transition: 0.2s;
+}
+
+.servicio-card:hover {
+    border-color: #78b9df;
+    box-shadow: 0 4px 12px rgba(20, 50, 80, 0.08);
+    transform: translateY(-2px);
+}
+
+.servicio-card h3 {
+    color: #243b53;
+    margin-bottom: 12px;
+}
+
+.servicio-card p {
+    color: #5b6573;
+    line-height: 1.5;
+}
+
+.servicio-card span {
+    display: block;
+    margin-top: 12px;
+    color: #5d7a2d;
+    font-weight: 600;
+}
+
+#estadoServicios {
+    color: #5b6573;
+    margin-top: 15px;
+    padding: 12px;
+    background-color: #eef3f9;
+    border-radius: 7px;
+    font-weight: 600;
+}
+
+
 @media (max-width: 700px) {
     .resumen,
     .lista-cuentas,
@@ -293,6 +341,14 @@ footer {
         align-items: stretch;
         flex-direction: column;
     }
+
+    .operaciones {
+    flex-direction: column;
+}
+
+    .operaciones .boton {
+    width: 100%;
+}
 
     #buscador {
         max-width: none;

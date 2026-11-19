@@ -160,8 +160,13 @@ function cargarResumenBancario() {
 
 async function iniciarCargaAsincronica() {
 
-    mensaje.setAttribute("aria-busy", "true");
-    mostrarMensaje("Cargando información bancaria...", "info");
+    mostrarMensaje(
+    "Información actualizada. Cuentas: " +
+    resumen.cantidad +
+    " | Capital total: " +
+    formatearDinero(resumen.capital),
+    "exito"
+);
 
     try {
 
@@ -225,6 +230,8 @@ const inputTipo = document.querySelector("#tipoCuenta");
 const inputSaldo = document.querySelector("#saldoInicial");
 const botonVaciar = document.querySelector("#vaciarCuentas");
 const avisoBienvenida = document.querySelector("#avisoBienvenida");
+const estadoServicios = document.querySelector("#estadoServicios");
+const listaServicios = document.querySelector("#listaServicios");
 
 // ==========================================
 // 5. FUNCIONES AUXILIARES
@@ -258,6 +265,120 @@ function escaparHTML(valor) {
 function mostrarMensaje(texto, tipo) {
     mensaje.textContent = texto;
     mensaje.className = "mensaje " + tipo;
+}
+
+// ==========================================
+// NOTIFICACIONES CON SWEETALERT2
+// ==========================================
+
+function mostrarNotificacion(texto, icono) {
+
+    if (typeof Swal === "undefined") {
+        console.error("SweetAlert2 no está disponible:", texto);
+        return;
+    }
+
+    Swal.fire({
+        title: texto,
+        icon: icono,
+        confirmButtonText: "Aceptar",
+        confirmButtonColor: "#243b53"
+    });
+
+}
+
+// ==========================================
+// CARGA DE SERVICIOS DESDE JSON CON FETCH
+// ==========================================
+
+async function cargarServicios() {
+
+    estadoServicios.hidden = false;
+    estadoServicios.textContent = "Cargando servicios bancarios...";
+
+    listaServicios.innerHTML = "";
+
+    try {
+
+        // Solicitar información al archivo JSON
+        const respuesta = await fetch("./data/servicios.json");
+
+        // Comprobar que la respuesta sea correcta
+        if (!respuesta.ok) {
+            throw new Error("No se pudieron obtener los servicios.");
+        }
+
+        // Convertir la respuesta a JSON
+        const servicios = await respuesta.json();
+
+        // Comprobar que recibimos un array
+        if (
+    !Array.isArray(servicios) ||
+    !servicios.every(servicio =>
+        servicio &&
+        typeof servicio.nombre === "string" &&
+        typeof servicio.descripcion === "string" &&
+        typeof servicio.beneficio === "string"
+    )
+) {
+    throw new Error("El formato de los servicios no es válido.");
+}
+
+        // Mostrar los servicios en el DOM
+        renderizarServicios(servicios);
+
+        mostrarNotificacion(
+            "Los servicios bancarios se cargaron correctamente.",
+            "success"
+        );
+
+    } catch (error) {
+
+        console.error("Error al cargar servicios:", error);
+
+        listaServicios.innerHTML = "";
+
+        mostrarNotificacion(
+            "No se pudieron cargar los servicios bancarios. Verificá tu conexión o el archivo JSON.",
+            "error"
+        );
+
+    } finally {
+
+        // Ocultar el mensaje de carga siempre
+        estadoServicios.hidden = true;
+
+    }
+
+}
+// ==========================================
+// RENDERIZAR SERVICIOS BANCARIOS
+// ==========================================
+
+function renderizarServicios(servicios) {
+
+    listaServicios.innerHTML = "";
+
+    servicios.forEach((servicio) => {
+
+        listaServicios.innerHTML += `
+            <article class="servicio-card">
+
+                <h3>${escaparHTML(servicio.nombre)}</h3>
+
+                <p>
+                    ${escaparHTML(servicio.descripcion)}
+                </p>
+
+                <span>
+                    ${escaparHTML(servicio.beneficio)}
+                </span>
+
+            </article>
+        `;
+
+    });
+
 }
 
 // ==========================================
@@ -577,3 +698,5 @@ renderizarCuentas();
 
 iniciarCargaAsincronica();
 mostrarAvisoBienvenida();
+
+cargarServicios();

@@ -1,0 +1,27 @@
+
+[
+    {
+        "id": 1,
+        "nombre": "Caja de ahorro",
+        "descripcion": "Administrá tu dinero y realizá depósitos y retiros.",
+        "beneficio": "Sin costos de mantenimiento."
+    },
+    {
+        "id": 2,
+        "nombre": "Cuenta corriente",
+        "descripcion": "Gestioná tus operaciones bancarias y movimientos.",
+        "beneficio": "Control de tus operaciones."
+    },
+    {
+        "id": 3,
+        "nombre": "Consulta de saldo",
+        "descripcion": "Consultá el dinero disponible en tus cuentas.",
+        "beneficio": "Información actualizada."
+    },
+    {
+        "id": 4,
+        "nombre": "Historial de movimientos",
+        "descripcion": "Revisá los depósitos y retiros realizados.",
+        "beneficio": "Seguimiento de tus operaciones."
+    }
+]
