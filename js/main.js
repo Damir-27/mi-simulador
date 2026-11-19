@@ -1,122 +1,11 @@
-// ==========================================
-// 1. CLASE CUENTA BANCARIA
-// ==========================================
+import {
+    CuentaBancaria,
+    cuentas,
+    inicializarCuentas,
+    guardarCuentas,
+} from "./cuentas.js";
 
-class CuentaBancaria {
-    constructor(titular, numeroCuenta, tipoCuenta, saldo) {
-        this.titular = titular;
-        this.numeroCuenta = numeroCuenta;
-        this.tipoCuenta = tipoCuenta;
-        this.saldo = saldo;
-        this.historialMovimientos = [];
-    }
-
-    depositar(monto) {
-        if (Number.isFinite(monto) && monto > 0) {
-            this.saldo += monto;
-
-            this.historialMovimientos.push("Depósito: $" + monto);
-
-            return true;
-        }
-
-        return false;
-    }
-
-    retirar(monto) {
-        if (Number.isFinite(monto) && monto > 0 && monto <= this.saldo) {
-            this.saldo -= monto;
-
-            this.historialMovimientos.push("Retiro: $" + monto);
-
-            return true;
-        }
-
-        return false;
-    }
-
-    consultarSaldo() {
-        return this.saldo;
-    }
-
-    mostrarDatos() {
-        return (
-            "Titular: " +
-            this.titular +
-            " | Cuenta: " +
-            this.numeroCuenta +
-            " | Tipo: " +
-            this.tipoCuenta +
-            " | Saldo: $" +
-            this.saldo
-        );
-    }
-}
-
-// ==========================================
-// 2. PERSISTENCIA DE CUENTAS EN LOCALSTORAGE
-// ==========================================
-
-const CLAVE_STORAGE = "simuladorBancario";
-
-// Crear las cuentas iniciales
-function crearCuentasIniciales() {
-    return [
-        new CuentaBancaria("Damian", "001", "Caja de ahorro", 10000),
-        new CuentaBancaria("Carlos", "002", "Caja de ahorro", 5000),
-        new CuentaBancaria("Empresa XYZ", "003", "Cuenta corriente", 25000),
-    ];
-}
-
-// Recuperar las cuentas guardadas
-function cargarCuentas() {
-    try {
-        const datosGuardados = JSON.parse(
-            localStorage.getItem(CLAVE_STORAGE) ?? "null"
-        );
-
-        if (!Array.isArray(datosGuardados)) {
-            return crearCuentasIniciales();
-        }
-
-        // Destructuring para recuperar las propiedades de cada cuenta
-        return datosGuardados.map(
-            ({
-                titular,
-                numeroCuenta,
-                tipoCuenta,
-                saldo,
-                historialMovimientos = [],
-            }) => {
-                const cuenta = new CuentaBancaria(
-                    titular,
-                    numeroCuenta,
-                    tipoCuenta,
-                    saldo
-                );
-
-                cuenta.historialMovimientos = historialMovimientos ?? [];
-
-                return cuenta;
-            }
-        );
-    } catch (error) {
-        return crearCuentasIniciales();
-    }
-}
-
-// ==========================================
-// 3. Array principal de cuentas
-// ==========================================
-const cuentas = cargarCuentas();
-
-// Guardar las cuentas actualizadas
-function guardarCuentas() {
-    localStorage.setItem(
-        CLAVE_STORAGE,
-        JSON.stringify(cuentas)
-    );
-}
+import { cargarServicios } from "./servicios.js";
 
 // ==========================================
 // CARGA ASINCRÓNICA DE INFORMACIÓN BANCARIA
@@ -124,14 +13,11 @@ function guardarCuentas() {
 
 function cargarResumenBancario() {
     return new Promise((resolve, reject) => {
-
         setTimeout(() => {
-
             // Verificamos que las cuentas tengan información válida.
-            const datosValidos = Array.isArray(cuentas) &&
-                cuentas.every(cuenta =>
-                    Number.isFinite(cuenta.saldo)
-                );
+            const datosValidos =
+                Array.isArray(cuentas) &&
+                cuentas.every((cuenta) => Number.isFinite(cuenta.saldo));
 
             if (!datosValidos) {
                 reject(new Error("Los datos bancarios no son válidos."));
@@ -141,16 +27,11 @@ function cargarResumenBancario() {
             // Calculamos información del simulador.
             const resumen = {
                 cantidad: cuentas.length,
-                capital: cuentas.reduce(
-                    (total, cuenta) => total + cuenta.saldo,
-                    0
-                )
+                capital: cuentas.reduce((total, cuenta) => total + cuenta.saldo, 0),
             };
 
             resolve(resumen);
-
         }, 1500);
-
     });
 }
 
@@ -159,17 +40,9 @@ function cargarResumenBancario() {
 // ==========================================
 
 async function iniciarCargaAsincronica() {
-
-    mostrarMensaje(
-    "Información actualizada. Cuentas: " +
-    resumen.cantidad +
-    " | Capital total: " +
-    formatearDinero(resumen.capital),
-    "exito"
-);
+    mensaje.setAttribute("aria-busy", "true");
 
     try {
-
         const resumen = await cargarResumenBancario();
 
         mostrarMensaje(
@@ -177,30 +50,24 @@ async function iniciarCargaAsincronica() {
             resumen.cantidad +
             " | Capital total: " +
             formatearDinero(resumen.capital),
-            "exito"
+            "exito",
         );
-
     } catch (error) {
-
         mostrarMensaje(
             "No se pudo cargar la información bancaria. Intentá nuevamente.",
-            "error"
+            "error",
         );
-
     } finally {
-
         mensaje.removeAttribute("aria-busy");
-
     }
 }
+
 // ==========================================
 // TEMPORIZADOR DE BIENVENIDA
 // ==========================================
 
 function mostrarAvisoBienvenida() {
-
     setTimeout(() => {
-
         if (!avisoBienvenida) {
             console.error("No se encontró el elemento de bienvenida.");
             return;
@@ -210,9 +77,7 @@ function mostrarAvisoBienvenida() {
             "¡Bienvenido al Simulador Bancario! Recordá revisar periódicamente los movimientos de tus cuentas.";
 
         avisoBienvenida.classList.add("aviso-visible");
-
     }, 4000);
-
 }
 // ==========================================
 // 4. SELECCIÓN DE ELEMENTOS DEL DOM
@@ -230,8 +95,6 @@ const inputTipo = document.querySelector("#tipoCuenta");
 const inputSaldo = document.querySelector("#saldoInicial");
 const botonVaciar = document.querySelector("#vaciarCuentas");
 const avisoBienvenida = document.querySelector("#avisoBienvenida");
-const estadoServicios = document.querySelector("#estadoServicios");
-const listaServicios = document.querySelector("#listaServicios");
 
 // ==========================================
 // 5. FUNCIONES AUXILIARES
@@ -265,120 +128,6 @@ function escaparHTML(valor) {
 function mostrarMensaje(texto, tipo) {
     mensaje.textContent = texto;
     mensaje.className = "mensaje " + tipo;
-}
-
-// ==========================================
-// NOTIFICACIONES CON SWEETALERT2
-// ==========================================
-
-function mostrarNotificacion(texto, icono) {
-
-    if (typeof Swal === "undefined") {
-        console.error("SweetAlert2 no está disponible:", texto);
-        return;
-    }
-
-    Swal.fire({
-        title: texto,
-        icon: icono,
-        confirmButtonText: "Aceptar",
-        confirmButtonColor: "#243b53"
-    });
-
-}
-
-// ==========================================
-// CARGA DE SERVICIOS DESDE JSON CON FETCH
-// ==========================================
-
-async function cargarServicios() {
-
-    estadoServicios.hidden = false;
-    estadoServicios.textContent = "Cargando servicios bancarios...";
-
-    listaServicios.innerHTML = "";
-
-    try {
-
-        // Solicitar información al archivo JSON
-        const respuesta = await fetch("./data/servicios.json");
-
-        // Comprobar que la respuesta sea correcta
-        if (!respuesta.ok) {
-            throw new Error("No se pudieron obtener los servicios.");
-        }
-
-        // Convertir la respuesta a JSON
-        const servicios = await respuesta.json();
-
-        // Comprobar que recibimos un array
-        if (
-    !Array.isArray(servicios) ||
-    !servicios.every(servicio =>
-        servicio &&
-        typeof servicio.nombre === "string" &&
-        typeof servicio.descripcion === "string" &&
-        typeof servicio.beneficio === "string"
-    )
-) {
-    throw new Error("El formato de los servicios no es válido.");
-}
-
-        // Mostrar los servicios en el DOM
-        renderizarServicios(servicios);
-
-        mostrarNotificacion(
-            "Los servicios bancarios se cargaron correctamente.",
-            "success"
-        );
-
-    } catch (error) {
-
-        console.error("Error al cargar servicios:", error);
-
-        listaServicios.innerHTML = "";
-
-        mostrarNotificacion(
-            "No se pudieron cargar los servicios bancarios. Verificá tu conexión o el archivo JSON.",
-            "error"
-        );
-
-    } finally {
-
-        // Ocultar el mensaje de carga siempre
-        estadoServicios.hidden = true;
-
-    }
-
-}
-// ==========================================
-// RENDERIZAR SERVICIOS BANCARIOS
-// ==========================================
-
-function renderizarServicios(servicios) {
-
-    listaServicios.innerHTML = "";
-
-    servicios.forEach((servicio) => {
-
-        listaServicios.innerHTML += `
-            <article class="servicio-card">
-
-                <h3>${escaparHTML(servicio.nombre)}</h3>
-
-                <p>
-                    ${escaparHTML(servicio.descripcion)}
-                </p>
-
-                <span>
-                    ${escaparHTML(servicio.beneficio)}
-                </span>
-
-            </article>
-        `;
-
-    });
-
 }
 
 // ==========================================
@@ -556,7 +305,16 @@ formularioCuenta.addEventListener("submit", function (evento) {
 
     cuentas.push(nuevaCuenta);
 
-    guardarCuentas();
+    if (!guardarCuentas(cuentas)) {
+        cuentas.pop();
+
+        mostrarMensaje(
+            "No se pudo guardar la nueva cuenta. Intentá nuevamente.",
+            "error",
+        );
+
+        return;
+    }
 
     formularioCuenta.reset();
 
@@ -567,7 +325,6 @@ formularioCuenta.addEventListener("submit", function (evento) {
         "exito",
     );
 });
-
 // ==========================================
 // 9. EVENTOS DE LOS BOTONES
 // ==========================================
@@ -602,20 +359,47 @@ listaCuentas.addEventListener("click", function (evento) {
         return;
     }
 
-    // ELIMINAR CUENTA
+    // ELIMINAR CUENTA CON CONFIRMACIÓN
     if (accion === "eliminar") {
-        const indice = cuentas.indexOf(cuenta);
+        Swal.fire({
+            title: "¿Eliminar esta cuenta?",
+            text:
+                "Se eliminará la cuenta de " +
+                cuenta.titular +
+                " y su historial de movimientos.",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Sí, eliminar",
+            cancelButtonText: "Cancelar",
+            confirmButtonColor: "#dc3545",
+            cancelButtonColor: "#6c757d",
+        }).then((resultado) => {
+            const indice = cuentas.indexOf(cuenta);
 
-        cuentas.splice(indice, 1);
+            if (indice !== -1) {
+                cuentas.splice(indice, 1);
 
-        guardarCuentas();
+                if (!guardarCuentas(cuentas)) {
+                    cuentas.splice(indice, 0, cuenta);
 
-        renderizarCuentas();
+                    renderizarCuentas();
 
-        mostrarMensaje(
-            "La cuenta de " + cuenta.titular + " fue eliminada.",
-            "exito",
-        );
+                    mostrarMensaje(
+                        "No se pudo guardar la eliminación. La cuenta fue restaurada.",
+                        "error",
+                    );
+
+                    return;
+                }
+
+                renderizarCuentas();
+
+                mostrarMensaje(
+                    "La cuenta de " + cuenta.titular + " fue eliminada correctamente.",
+                    "exito",
+                );
+            }
+        });
 
         return;
     }
@@ -631,61 +415,137 @@ listaCuentas.addEventListener("click", function (evento) {
         return;
     }
 
-    // DEPOSITAR
-    if (accion === "depositar") {
-        if (cuenta.depositar(monto)) {
-            mostrarMensaje(
-                "Depósito realizado correctamente en la cuenta de " +
-                cuenta.titular +
-                ".",
-                "exito",
-            );
-        } else {
-            mostrarMensaje("No se pudo realizar el depósito.", "error");
-        }
+    // CONFIRMAR DEPÓSITO O RETIRO
+    if (accion !== "depositar" && accion !== "retirar") {
+        return;
     }
-    // RETIRAR
-    else if (accion === "retirar") {
-        if (cuenta.retirar(monto)) {
-            mostrarMensaje(
-                "Retiro realizado correctamente en la cuenta de " +
-                cuenta.titular +
-                ".",
-                "exito",
-            );
-        } else {
-            mostrarMensaje("Fondos insuficientes para realizar el retiro.", "error");
-        }
-    }
-    guardarCuentas();
 
-    renderizarCuentas();
+    const esDeposito = accion === "depositar";
+
+    if (!esDeposito && monto > cuenta.saldo) {
+        mostrarMensaje("Fondos insuficientes para realizar el retiro.", "error");
+        return;
+    }
+
+    Swal.fire({
+        title: esDeposito ? "¿Confirmar depósito?" : "¿Confirmar retiro?",
+        text:
+            (esDeposito ? "Vas a depositar " : "Vas a retirar ") +
+            formatearDinero(monto) +
+            " en la cuenta de " +
+            cuenta.titular +
+            ".",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonText: "Confirmar operación",
+        cancelButtonText: "Cancelar",
+        confirmButtonColor: "#243b53",
+        cancelButtonColor: "#6c757d",
+    }).then((resultado) => {
+        if (!resultado.isConfirmed) {
+            return;
+        }
+
+        // Guardar el estado anterior de la cuenta
+        const saldoAnterior = cuenta.saldo;
+        const movimientosAnteriores = cuenta.historialMovimientos.length;
+
+        // Realizar depósito o retiro
+        const operacionExitosa = esDeposito
+            ? cuenta.depositar(monto)
+            : cuenta.retirar(monto);
+
+        if (!operacionExitosa) {
+            mostrarMensaje("No se pudo realizar la operación.", "error");
+            return;
+        }
+
+        // Comprobar que los cambios se guarden correctamente
+        if (!guardarCuentas(cuentas)) {
+            cuenta.saldo = saldoAnterior;
+
+            cuenta.historialMovimientos.length = movimientosAnteriores;
+
+            renderizarCuentas();
+
+            mostrarMensaje(
+                "No se pudo guardar la operación. Los cambios fueron revertidos.",
+                "error",
+            );
+
+            return;
+        }
+
+        renderizarCuentas();
+
+        mostrarMensaje(
+            (esDeposito ? "Depósito" : "Retiro") +
+            " realizado correctamente en la cuenta de " +
+            cuenta.titular +
+            ".",
+            "exito",
+        );
+    });
 });
+
 // ==========================================
 // VACIAR TODAS LAS CUENTAS
 // ==========================================
 
 if (botonVaciar) {
     botonVaciar.addEventListener("click", function () {
-        cuentas.splice(0, cuentas.length);
+        if (cuentas.length === 0) {
+            mostrarMensaje("No hay cuentas para eliminar.", "error");
+            return;
+        }
 
-        guardarCuentas();
-        renderizarCuentas();
+        Swal.fire({
+            title: "¿Vaciar todas las cuentas?",
+            text: "Se eliminarán todas las cuentas y sus historiales. Esta acción no se puede deshacer.",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Sí, vaciar todo",
+            cancelButtonText: "Cancelar",
+            confirmButtonColor: "#dc3545",
+            cancelButtonColor: "#6c757d",
+        }).then((resultado) => {
+            if (resultado.isConfirmed) {
+                // Guardar una copia de las cuentas actuales
+                const cuentasAnteriores = [...cuentas];
 
-        mostrarMensaje(
-            "Se eliminaron todas las cuentas.",
-            "exito"
-        );
+                // Vaciar todas las cuentas
+                cuentas.splice(0, cuentas.length);
+
+                // Comprobar que se haya guardado el cambio
+                if (!guardarCuentas(cuentas)) {
+                    cuentas.push(...cuentasAnteriores);
+
+                    renderizarCuentas();
+
+                    mostrarMensaje(
+                        "No se pudieron eliminar las cuentas. Se restauraron los datos anteriores.",
+                        "error",
+                    );
+
+                    return;
+                }
+
+                renderizarCuentas();
+
+                mostrarMensaje(
+                    "Se eliminaron todas las cuentas correctamente.",
+                    "exito",
+                );
+            }
+        });
     });
 }
-
-
 
 // ==========================================
 // 10. BUSCADOR EN TIEMPO REAL
 // ==========================================
 
-buscador.addEventListener("keyup", function () {
+buscador.addEventListener("input", function () {
     renderizarCuentas();
 });
 
@@ -693,10 +553,27 @@ buscador.addEventListener("keyup", function () {
 // 11. INICIAR LA APLICACIÓN
 // ==========================================
 
-guardarCuentas();
-renderizarCuentas();
+async function iniciarAplicacion() {
+    try {
+        await inicializarCuentas();
 
-iniciarCargaAsincronica();
-mostrarAvisoBienvenida();
+        renderizarCuentas();
 
-cargarServicios();
+        iniciarCargaAsincronica();
+
+        mostrarAvisoBienvenida();
+
+        cargarServicios();
+    } catch (error) {
+        console.error("No se pudo iniciar el simulador:", error);
+
+        mostrarMensaje(
+            "No se pudieron cargar las cuentas bancarias. Verificá el archivo cuentas.json.",
+            "error",
+        );
+
+        cargarServicios();
+    }
+}
+
+iniciarAplicacion();

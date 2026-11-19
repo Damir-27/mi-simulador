@@ -1,0 +1,23 @@
+[
+    {
+        "titular": "Damian",
+        "numeroCuenta": "001",
+        "tipoCuenta": "Caja de ahorro",
+        "saldo": 10000,
+        "historialMovimientos": []
+    },
+    {
+        "titular": "Carlos",
+        "numeroCuenta": "002",
+        "tipoCuenta": "Caja de ahorro",
+        "saldo": 5000,
+        "historialMovimientos": []
+    },
+    {
+        "titular": "Empresa XYZ",
+        "numeroCuenta": "003",
+        "tipoCuenta": "Cuenta corriente",
+        "saldo": 25000,
+        "historialMovimientos": []
+    }
+]

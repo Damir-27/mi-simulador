@@ -10,16 +10,24 @@
     <link rel="stylesheet" href="./css/style.css" />
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11" defer></script>
-    <script defer src="./js/main.js"></script>
+    <script type="module" src="./js/main.js"></script>
 </head>
 
 <body>
     <header class="encabezado">
-        <div class="contenedor">
-            <h1>Simulador Bancario</h1>
-            <p>Administrá tus cuentas bancarias de manera sencilla.</p>
-        </div>
-    </header>
+    <div class="contenedor">
+
+        <img
+            src="./assets/logo-banco.png"
+            alt="Logo de BancoSim"
+            class="logo"
+        >
+
+        <h1>Simulador Bancario</h1>
+        <p>Administrá tus cuentas bancarias de manera sencilla.</p>
+
+    </div>
+</header>
 
     <main class="contenedor">
         <section class="resumen">
@@ -77,7 +85,13 @@
 
                 
 
-                <input type="search" id="buscador" placeholder="Buscar por titular o número..." />
+                <label for="buscador">Buscar cuenta</label>
+<input
+    type="search"
+    id="buscador"
+    placeholder="Buscar por titular o número..."
+    autocomplete="off"
+/>
             </div>
 
             <button type="button" id="vaciarCuentas" class="boton boton-vaciar">
@@ -86,7 +100,7 @@
 
             <p id="mensaje" class="mensaje" aria-live="polite"></p>
 
-            <p id="avisoBienvenida" class="mensaje" aria-live="polite"></p>
+            <p id="avisoBienvenida" class="mensaje" role="status" aria-live="polite"></p>
 
             <div id="listaCuentas" class="lista-cuentas">
                 <!-- Las cuentas se generan dinámicamente desde JavaScript -->
